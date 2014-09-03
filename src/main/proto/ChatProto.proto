@@ -1,0 +1,13 @@
+option java_package = "com.hoolai.chat.proto";
+
+message ChatMsgProto {
+    optional int32 mainType = 1;
+    optional int32 subType = 2;
+    optional int32 channelId = 3;
+    optional string userId = 4;
+    optional string userName = 5;
+    optional string targetUserId = 6;
+    optional string targetUserName = 7;
+    optional int32 unionId = 8;
+    optional string msg = 9;
+}
