@@ -1,4 +1,4 @@
 nettyProtobufChat
 =================
 
-netty3 and protobuf chat
+netty and protobuf chat
