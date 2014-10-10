@@ -72,6 +72,7 @@ public class ChatServerHandler extends SimpleChannelUpstreamHandler{
             } else {
                 ctx.getChannel().close();
             }
+            System.out.println(msg);
         }
         
 //        ChatMsgProto msg = (ChatMsgProto) e.getMessage();

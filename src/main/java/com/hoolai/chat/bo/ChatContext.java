@@ -26,10 +26,10 @@ public class ChatContext{
 	/** 表示一个帧的最大长度，此处是8kb */
 	public static final int max_frame_length_8kb = 81920;
 	
-	/** 表示一个帧长度所占的字节，此处是一个int长度 */
+	/** 表示一个帧长度所占的字节，此处是一个int长度 ，即4个字节*/
 	public static final int frame_length_4b = 4;
 	
-	/** 表示protobuf命令所占的长度，此处是2个字节 */
+	/** 表示protobuf命令所占的长度，此处是一个short长度，即2个字节 */
 	public static final int protobuf_cmd_length_2b = 2;
 	
 	private static Logger logger = Logger.getLogger("chatServer");

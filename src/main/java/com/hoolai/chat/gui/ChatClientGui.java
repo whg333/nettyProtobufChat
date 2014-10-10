@@ -1,5 +1,7 @@
 package com.hoolai.chat.gui;
 
+import static com.hoolai.chat.bo.ChatContext.frame_length_4b;
+import static com.hoolai.chat.bo.ChatContext.max_frame_length_8kb;
 import static org.jboss.netty.channel.Channels.pipeline;
 
 import java.awt.FlowLayout;
@@ -64,7 +66,7 @@ public class ChatClientGui extends JFrame{
 		
 		ipLabel = new JLabel("消息服务器IP：");
 		portLabel = new JLabel("消息服务器port端口：");
-		ipFiled = new JTextField("localhost", 8);
+		ipFiled = new JTextField("192.168.20.12", 8);
 		portFiled = new JTextField("8007", 5);
 		connectButton = new JButton("连接");
 		sendArea = new JTextArea(10, 50);
@@ -93,11 +95,7 @@ public class ChatClientGui extends JFrame{
 					public void run(){
 						if(connect()){
 							startHeartbeat();
-							connectButton.setEnabled(false);
-							pingButton.setEnabled(true);
-							closeButton.setEnabled(true);
-							sendButton.setEnabled(true);
-							sendArea.setEditable(true);
+							connectButton();
 						}
 					}
 				});
@@ -127,12 +125,7 @@ public class ChatClientGui extends JFrame{
 					@Override
 					public void run(){
 						disconnect();
-						stopHeartbeat();
-						connectButton.setEnabled(true);
-						pingButton.setEnabled(false);
-						closeButton.setEnabled(false);
-						sendButton.setEnabled(false);
-						sendArea.setEditable(false);
+						close();
 					}
 				});
 			}
@@ -179,7 +172,7 @@ public class ChatClientGui extends JFrame{
         bootstrap.setPipelineFactory(new ChannelPipelineFactory(){
         	public ChannelPipeline getPipeline(){
         		return pipeline(
-        		        new LengthFieldBasedFrameDecoder(81920, 0, 4, 0, 4, true, true),
+        		        new LengthFieldBasedFrameDecoder(max_frame_length_8kb, 0, frame_length_4b, 0, frame_length_4b, true, true),
         		        new ChatProtoBufDecoder(),
         		        new ChatProtoBufEncoder(),
         		        new ChatClientGuiHandler()
@@ -218,19 +211,48 @@ public class ChatClientGui extends JFrame{
 		logger.info("ChatClientGui Schedule threads start...");
 	}
 	
+	private void close(){
+		stopHeartbeat();
+		closeButton();
+	}
+	
 	private void stopHeartbeat(){
+		if(scheduleExecutor == null){
+			return;
+		}
 		scheduleExecutor.shutdown();
 		scheduleExecutor = null;
 	}
 	
+	private void connectButton(){
+		resetButton(true);
+	}
+	
+	private void closeButton(){
+		if(connectButton.isEnabled()){
+			return;
+		}
+		resetButton(false);
+	}
+	
+	private void resetButton(boolean isConnected){
+		connectButton.setEnabled(!isConnected);
+		pingButton.setEnabled(isConnected);
+		closeButton.setEnabled(isConnected);
+		sendButton.setEnabled(isConnected);
+		sendArea.setEditable(isConnected);
+	}
+	
 	private void heartbeat(){
-		channel.write(ChatMsg.heartbeatProto().toBuilder());
+		ChatMsgProto  msg = ChatMsg.heartbeatProto();
+		System.out.println("heartbeat len:"+msg.toByteArray().length);
+		channel.write(msg.toBuilder());
 	}
 	
 	private void disconnect(){
 		// Close the connection. Make sure the close operation ends because
 		// all I/O operations are asynchronous in Netty.
-		channel.close().awaitUninterruptibly();
+		channel.close().awaitUninterruptibly(3, TimeUnit.SECONDS);
 		
 		// Shut down all thread pools to exit.
 		bootstrap.releaseExternalResources();
@@ -250,24 +272,32 @@ public class ChatClientGui extends JFrame{
 	
 	private boolean ping(){
 		ChatMsgProto msg = ChatMsg.pingProto();
+		System.out.println("ping len:"+msg.toByteArray().length);
+		//boolean pingIsSuccess = channel.write(msg.toBuilder()).awaitUninterruptibly().isSuccess();
+		//System.out.println("pingIsSuccess:"+pingIsSuccess);
 		channel.write(msg.toBuilder());
-		
-		ChatMsg responseMsg;
-        boolean interrupted = false;
-        for (;;) {
-            try {
-            	responseMsg = response.take();
-                break;
-            } catch (InterruptedException e) {
-                interrupted = true;
-            }
-        }
-
-        if (interrupted) {
-            Thread.currentThread().interrupt();
-        }
+		ChatMsg responseMsg = null;
+//        boolean interrupted = false;
+//        for (;;) {
+//            try {
+//            	responseMsg = response.take();
+//                break;
+//            } catch (InterruptedException e) {
+//                interrupted = true;
+//            }
+//        }
+//
+//        if (interrupted) {
+//            Thread.currentThread().interrupt();
+//        }
         
-        if(responseMsg.getMsg().equals("pong")){
+        try {
+        	responseMsg = response.poll(3, TimeUnit.SECONDS);
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+		}
+        
+        if(responseMsg != null && responseMsg.getMsg().equals("pong")){
         	return true;
         }
         return false;
@@ -306,6 +336,7 @@ public class ChatClientGui extends JFrame{
 	    public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent e) {
 			logger.error("Unexpected exception from downstream.", e.getCause());
 			receiveArea.setText("Unexpected exception from downstream.\n" + e.getCause());
+			close();
 	        e.getChannel().close();
 	    }
 	    
@@ -313,6 +344,7 @@ public class ChatClientGui extends JFrame{
 		public void channelDisconnected(ChannelHandlerContext ctx, ChannelStateEvent e) throws Exception {
 			logger.info("client channel disconnected:" + ctx.getChannel());
 			receiveArea.setText("client channel disconnected:" + ctx.getChannel());
+			close();
 			e.getChannel().close();
 	    }
 	}

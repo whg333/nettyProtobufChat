@@ -1,5 +1,7 @@
 package com.hoolai.chat.net;
 
+import static com.hoolai.chat.bo.ChatContext.frame_length_4b;
+import static com.hoolai.chat.bo.ChatContext.max_frame_length_8kb;
 import static org.jboss.netty.channel.Channels.pipeline;
 
 import org.jboss.netty.channel.ChannelPipeline;
@@ -20,7 +22,7 @@ public class ChatClientPipelineFactory implements ChannelPipelineFactory {
 //        p.addLast("frameEncoder", new ProtobufVarint32LengthFieldPrepender());
 //        p.addLast("protobufEncoder", new ProtobufEncoder());
         
-        p.addLast("framer",  new LengthFieldBasedFrameDecoder(81920, 0, 4, 0, 4, true, true));
+        p.addLast("framer",  new LengthFieldBasedFrameDecoder(max_frame_length_8kb, 0, frame_length_4b, 0, frame_length_4b, true, true));
         p.addLast("decoder", new ChatProtoBufDecoder());
         p.addLast("encoder", new ChatProtoBufEncoder());
 
