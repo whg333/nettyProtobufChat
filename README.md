@@ -1,4 +1,4 @@
-nettyProtobufChat
+netty3&Protobuf4Chat
 =================
 
-netty and protobuf chat
+netty3 and protobuf for chat
