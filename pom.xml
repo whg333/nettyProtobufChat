@@ -61,13 +61,11 @@
 			<artifactId>log4j</artifactId>
 			<version>1.2.12</version>
 		</dependency>
-		<!-- 
 		<dependency>
 			<groupId>org.jboss.netty</groupId>
 			<artifactId>netty</artifactId>
 			<version>3.2.5.Final</version>
 		</dependency>
-		 -->
 		<dependency>
 			<groupId>com.google.code</groupId>
 			<artifactId>protobuf-java</artifactId>
