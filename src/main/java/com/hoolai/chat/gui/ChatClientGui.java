@@ -66,7 +66,7 @@ public class ChatClientGui extends JFrame{
 		
 		ipLabel = new JLabel("消息服务器IP：");
 		portLabel = new JLabel("消息服务器port端口：");
-		ipFiled = new JTextField("192.168.20.12", 8);
+		ipFiled = new JTextField("localhost", 8);
 		portFiled = new JTextField("8007", 5);
 		connectButton = new JButton("连接");
 		sendArea = new JTextArea(10, 50);
