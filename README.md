@@ -18,6 +18,7 @@ OS name: "windows 7" version: "6.1" arch: "amd64" Family: "dos"
 ## Example
 1. Run **ChatServer.java**
 2. Run **ChatClientGui.java**
+
 ### connect
 ![connect](http://cejdh.img47.wal8.com/img47/533449_20151202165458/145109985783.png)
 
