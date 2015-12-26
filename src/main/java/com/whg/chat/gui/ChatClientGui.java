@@ -95,7 +95,7 @@ public class ChatClientGui extends JFrame{
 					public void run(){
 						if(connect()){
 							startHeartbeat();
-							connectButton();
+							connectButtonAndField();
 						}
 					}
 				});
@@ -213,7 +213,7 @@ public class ChatClientGui extends JFrame{
 	
 	private void close(){
 		stopHeartbeat();
-		closeButton();
+		closeButtonAndField();
 	}
 	
 	private void stopHeartbeat(){
@@ -224,15 +224,19 @@ public class ChatClientGui extends JFrame{
 		scheduleExecutor = null;
 	}
 	
-	private void connectButton(){
+	private void connectButtonAndField(){
 		resetButton(true);
+		resetField(true);
+		sendArea.requestFocus();
 	}
 	
-	private void closeButton(){
+	private void closeButtonAndField(){
 		if(connectButton.isEnabled()){
 			return;
 		}
 		resetButton(false);
+		resetField(false);
+		ipFiled.requestFocus();
 	}
 	
 	private void resetButton(boolean isConnected){
@@ -241,6 +245,11 @@ public class ChatClientGui extends JFrame{
 		closeButton.setEnabled(isConnected);
 		sendButton.setEnabled(isConnected);
 		sendArea.setEditable(isConnected);
+	}
+	
+	private void resetField(boolean isConnect){
+		ipFiled.setEditable(!isConnect);
+		portFiled.setEditable(!isConnect);
 	}
 	
 	private void heartbeat(){
