@@ -138,7 +138,7 @@ public class ChatClientGui extends JFrame{
 				SwingUtilities.invokeLater(new Runnable() {
 					@Override
 					public void run() {
-						sedMsg(sendArea.getText());
+						sendMsg(sendArea.getText());
 					}
 				});
 			}
@@ -267,7 +267,7 @@ public class ChatClientGui extends JFrame{
 		bootstrap.releaseExternalResources();
 	}
 	
-	private void sedMsg(String msgStr){
+	private void sendMsg(String msgStr){
 		ChatMsgProto msg = ChatMsg.testProto(msgStr);
 		channel.write(msg.toBuilder()).addListener(new ChannelFutureListener(){
 			@Override

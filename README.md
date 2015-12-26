@@ -14,3 +14,18 @@ Java version: 1.8.0_51
 Java home: E:\Program Files\Java\jdk1.8.0_51\jre  
 Default locale: zh_CN, platform encoding: GBK  
 OS name: "windows 7" version: "6.1" arch: "amd64" Family: "dos"
+
+## Example
+1. Run **ChatServer.java**
+2. Run **ChatClientGui.java**
+### connect
+![connect](http://cejdh.img47.wal8.com/img47/533449_20151202165458/145109985783.png)
+
+### sendMsg
+![sendMsg](http://cejdh.img47.wal8.com/img47/533449_20151202165458/145109985794.png)
+
+### ping
+![ping](http://cejdh.img47.wal8.com/img47/533449_20151202165458/1451099858.png)
+
+### disconnect
+![disconnect](http://cejdh.img47.wal8.com/img47/533449_20151202165458/145109985806.png)
